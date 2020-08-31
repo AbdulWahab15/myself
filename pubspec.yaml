@@ -62,6 +62,7 @@ flutter:
   #   - images/a_dot_ham.jpeg
   assets:
     - images/background_port.jpg
+    - images/background_flat.jpg
     - images/botao_filmar.png
     - images/botao_foto.png
     - images/bottom_image_choose.png
