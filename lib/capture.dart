@@ -27,7 +27,7 @@ class _CaptureState extends State<Capture> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  int count=0;
+  int count = 0;
   bool check = false;
 
   @override
@@ -52,6 +52,20 @@ class _CaptureState extends State<Capture> {
   double width = 100.0, height = 100.0;
   double x = 0.0, y = 0.0;
   String path;
+  bool camera = false,
+      flash = false,
+      timer = false,
+      photo = false,
+      settings = false,
+      hdr = false,
+      share = false;
+  int cameras = 0,
+      flashs = 0,
+      timers = 0,
+      photos = 0,
+      setting = 0,
+      hdrs = 0,
+      shares = 0;
 
   void _updateLocation(PointerEvent details) {
     setState(() {
@@ -62,9 +76,166 @@ class _CaptureState extends State<Capture> {
     check = true;
   }
 
-  callCamera(){
-    if(widget.mode==1){
-      return  Transform.translate(
+  callCamera() {
+    if (widget.mode == 1) {
+      print(cameras);
+      if (cameras == null) {
+//        cameras=widget.mode-1;
+        return Transform.translate(
+            offset: Offset(x, y),
+            child: InkWell(
+              onTap: () async {
+                print('yay for image');
+                try {
+                  await _initCamFuture;
+
+                  // Construct the path where the image should be saved using the path
+                  // package.
+
+                  final path = join(
+                    // Store the picture in the temp directory.
+                    // Find the temp directory using the `path_provider` plugin.
+                    (await getExternalStorageDirectory()).path,
+                    '${DateTime.now()}.png',
+                  );
+
+                  print(path);
+                  // Attempt to take a picture and log where it's been saved.
+                  await controller.takePicture(path);
+                  GallerySaver.saveImage(path, albumName: 'Media')
+                      .then((bool success) {
+                    setState(() {});
+                  });
+                } catch (e) {
+                  // If an error occurs, log the error to the console.
+                  print(e);
+                }
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    'images/ic_outside_indicator.png',
+                    width: 50,
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Container(
+                      width: width * 2,
+                      height: height * 2,
+                      child:
+                          CameraPreview(controller), // this is my CameraPreview
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      } else if (cameras == 0) {
+        return Transform.translate(
+            offset: Offset(x, y),
+            child: InkWell(
+              onTap: () async {
+                print('yay for image');
+                try {
+                  await _initCamFuture;
+
+                  // Construct the path where the image should be saved using the path
+                  // package.
+
+                  final path = join(
+                    // Store the picture in the temp directory.
+                    // Find the temp directory using the `path_provider` plugin.
+                    (await getExternalStorageDirectory()).path,
+                    '${DateTime.now()}.png',
+                  );
+
+                  print(path);
+                  // Attempt to take a picture and log where it's been saved.
+                  await controller.takePicture(path);
+                  GallerySaver.saveImage(path, albumName: 'Media')
+                      .then((bool success) {
+                    setState(() {});
+                  });
+                } catch (e) {
+                  // If an error occurs, log the error to the console.
+                  print(e);
+                }
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    'images/ic_outside_indicator.png',
+                    width: 50,
+                  ),
+                  FittedBox(
+                    fit: BoxFit.fitWidth,
+                    child: Container(
+                      width: width * 2,
+                      height: height * 2,
+                      child:
+                          CameraPreview(controller), // this is my CameraPreview
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      } else if (cameras == 1) {
+        return Transform.translate(
+            offset: Offset(x, y),
+            child: InkWell(
+              onTap: () async {
+                print('yay for video');
+                if (count == 0) {
+                  try {
+                    await _initCamFuture;
+//                    final Directory extDir = await getExternalStorageDirectory();
+//                    print(extDir);
+//                    final String dirPath = '${extDir.path}/Movies/flutter_test';
+//                    await Directory(dirPath).create(recursive: true);
+//                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
+
+                    path = join(
+                      (await getExternalStorageDirectory()).path,
+                      '${DateTime.now()}.mp4',
+                    );
+
+                    print(path);
+                    // Attempt to take a picture and log where it's been saved.
+                    await controller.startVideoRecording(path);
+                  } catch (e) {
+                    // If an error occurs, log the error to the console.
+                    print(e);
+                  }
+                } else if (count == 1) {
+                  _stopVideoRecording();
+                  print('savedPath' + path);
+                  GallerySaver.saveVideo(path, albumName: 'Video')
+                      .then((bool success) {
+                    setState(() {
+                      print('savedPath' + path);
+                    });
+                  });
+                }
+              },
+              child: Row(
+                children: [
+                  Image.asset(
+                    'images/ic_outside_indicator.png',
+                    width: 50,
+                  ),
+                  FittedBox(
+                    child: Container(
+                      width: width * 2,
+                      height: height * 2,
+                      child:
+                          CameraPreview(controller), // this is my CameraPreview
+                    ),
+                  ),
+                ],
+              ),
+            ));
+      }
+
+      return Transform.translate(
           offset: Offset(x, y),
           child: InkWell(
             onTap: () async {
@@ -103,57 +274,54 @@ class _CaptureState extends State<Capture> {
                 FittedBox(
                   fit: BoxFit.fitWidth,
                   child: Container(
-                    width: width*2 ,
-                    height: height*2,
-                    child: CameraPreview(
-                        controller), // this is my CameraPreview
+                    width: width * 2,
+                    height: height * 2,
+                    child:
+                        CameraPreview(controller), // this is my CameraPreview
                   ),
                 ),
               ],
             ),
           ));
-    }
-    else if(widget.mode==2){
-      return  Transform.translate(
+    } else if (widget.mode == 2) {
+      return Transform.translate(
           offset: Offset(x, y),
           child: InkWell(
             onTap: () async {
-
               print('yay for video');
-              if(count==0)
-                {
-                  try {
-                    await _initCamFuture;
+              if (count == 0) {
+                try {
+                  await _initCamFuture;
 //                    final Directory extDir = await getExternalStorageDirectory();
 //                    print(extDir);
 //                    final String dirPath = '${extDir.path}/Movies/flutter_test';
 //                    await Directory(dirPath).create(recursive: true);
 //                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
 
-                     path = join(
+                  path = join(
+                    (await getExternalStorageDirectory()).path,
+                    '${DateTime.now()}.mp4',
+                  );
 
-                      (await getExternalStorageDirectory()).path,
-                      '${DateTime.now()}.mp4',
-                    );
-
-                    print(path);
-                    // Attempt to take a picture and log where it's been saved.
-                    await controller.startVideoRecording(path);
-
-                  } catch (e) {
-                    // If an error occurs, log the error to the console.
-                    print(e);
-                  }
+                  print(path);
+                  // Attempt to take a picture and log where it's been saved.
+                  await controller.startVideoRecording(path);
+                  setState(() {
+                    count = 1;
+                  });
+                } catch (e) {
+                  // If an error occurs, log the error to the console.
+                  print(e);
                 }
-             else if(count==1){
-               _stopVideoRecording();
-               print('savedPath'+path);
-               GallerySaver.saveVideo(path, albumName: 'Video')
-                   .then((bool success) {
-                 setState(() {
-                   print('savedPath'+path);
-                 });
-               });
+              } else if (count == 1) {
+                _stopVideoRecording();
+                print('savedPath' + path);
+                GallerySaver.saveVideo(path, albumName: 'Video')
+                    .then((bool success) {
+                  setState(() {
+                    print('savedPath' + path);
+                  });
+                });
               }
             },
             child: Row(
@@ -164,17 +332,192 @@ class _CaptureState extends State<Capture> {
                 ),
                 FittedBox(
                   child: Container(
-                    width: width*2 ,
-                    height: height*2,
-                    child: CameraPreview(
-                        controller), // this is my CameraPreview
+                    width: width * 2,
+                    height: height * 2,
+                    child:
+                        CameraPreview(controller), // this is my CameraPreview
                   ),
                 ),
               ],
             ),
           ));
+//      if(cameras==null){
+////        cameras=widget.mode-1;
+//        return  Transform.translate(
+//            offset: Offset(x, y),
+//            child: InkWell(
+//              onTap: () async {
+//
+//                print('yay for video');
+//                if(count==0)
+//                {
+//                  try {
+//                    await _initCamFuture;
+////                    final Directory extDir = await getExternalStorageDirectory();
+////                    print(extDir);
+////                    final String dirPath = '${extDir.path}/Movies/flutter_test';
+////                    await Directory(dirPath).create(recursive: true);
+////                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
+//
+//                    path = join(
+//
+//                      (await getExternalStorageDirectory()).path,
+//                      '${DateTime.now()}.mp4',
+//                    );
+//
+//                    print(path);
+//                    // Attempt to take a picture and log where it's been saved.
+//                    await controller.startVideoRecording(path);
+//
+//                  } catch (e) {
+//                    // If an error occurs, log the error to the console.
+//                    print(e);
+//                  }
+//                }
+//                else if(count==1){
+//                  _stopVideoRecording();
+//                  print('savedPath'+path);
+//                  GallerySaver.saveVideo(path, albumName: 'Video')
+//                      .then((bool success) {
+//                    setState(() {
+//                      print('savedPath'+path);
+//                    });
+//                  });
+//                }
+//              },
+//              child: Row(
+//                children: [
+//                  Image.asset(
+//                    'images/ic_outside_indicator.png',
+//                    width: 50,
+//                  ),
+//                  FittedBox(
+//                    child: Container(
+//                      width: width*2 ,
+//                      height: height*2,
+//                      child: CameraPreview(
+//                          controller), // this is my CameraPreview
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ));
+//      }
+//      else if(cameras==0){
+//        return  Transform.translate(
+//            offset: Offset(x, y),
+//            child: InkWell(
+//              onTap: () async {
+//                print('yay for image');
+//                try {
+//                  await _initCamFuture;
+//
+//                  // Construct the path where the image should be saved using the path
+//                  // package.
+//
+//                  final path = join(
+//                    // Store the picture in the temp directory.
+//                    // Find the temp directory using the `path_provider` plugin.
+//                    (await getExternalStorageDirectory()).path,
+//                    '${DateTime.now()}.png',
+//                  );
+//
+//                  print(path);
+//                  // Attempt to take a picture and log where it's been saved.
+//                  await controller.takePicture(path);
+//                  GallerySaver.saveImage(path, albumName: 'Media')
+//                      .then((bool success) {
+//                    setState(() {});
+//                  });
+//                } catch (e) {
+//                  // If an error occurs, log the error to the console.
+//                  print(e);
+//                }
+//              },
+//              child: Row(
+//                children: [
+//                  Image.asset(
+//                    'images/ic_outside_indicator.png',
+//                    width: 50,
+//                  ),
+//                  FittedBox(
+//                    fit: BoxFit.fitWidth,
+//                    child: Container(
+//                      width: width*2 ,
+//                      height: height*2,
+//                      child: CameraPreview(
+//                          controller), // this is my CameraPreview
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ));
+//      }
+//      else if(cameras==1){
+//        return  Transform.translate(
+//            offset: Offset(x, y),
+//            child: InkWell(
+//              onTap: () async {
+//
+//                print('yay for video');
+//                if(count==0)
+//                {
+//                  try {
+//                    await _initCamFuture;
+////                    final Directory extDir = await getExternalStorageDirectory();
+////                    print(extDir);
+////                    final String dirPath = '${extDir.path}/Movies/flutter_test';
+////                    await Directory(dirPath).create(recursive: true);
+////                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
+//
+//                    path = join(
+//
+//                      (await getExternalStorageDirectory()).path,
+//                      '${DateTime.now()}.mp4',
+//                    );
+//
+//                    print(path);
+//                    // Attempt to take a picture and log where it's been saved.
+//                    await controller.startVideoRecording(path);
+//
+//                  } catch (e) {
+//                    // If an error occurs, log the error to the console.
+//                    print(e);
+//                  }
+//                }
+//                else if(count==1){
+//                  _stopVideoRecording();
+//                  print('savedPath'+path);
+//                  GallerySaver.saveVideo(path, albumName: 'Video')
+//                      .then((bool success) {
+//                    setState(() {
+//                      print('savedPath'+path);
+//                    });
+//                  });
+//                }
+//              },
+//              child: Row(
+//                children: [
+//                  Image.asset(
+//                    'images/ic_outside_indicator.png',
+//                    width: 50,
+//                  ),
+//                  FittedBox(
+//                    child: Container(
+//                      width: width*2 ,
+//                      height: height*2,
+//                      child: CameraPreview(
+//                          controller), // this is my CameraPreview
+//                    ),
+//                  ),
+//                ],
+//              ),
+//            ));
+//
+//      }
     }
   }
+
   Future<void> _stopVideoRecording() async {
     if (!controller.value.isRecordingVideo) {
       return null;
@@ -182,9 +525,9 @@ class _CaptureState extends State<Capture> {
 
     try {
       await controller.stopVideoRecording();
-      count=0;
+      count = 0;
     } on CameraException catch (e) {
-      print('Exception'+e.toString());
+      print('Exception' + e.toString());
       return null;
     }
   }
@@ -216,32 +559,184 @@ class _CaptureState extends State<Capture> {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-
-                   RawMaterialButton(
-                      child:
-                          Image.asset('images/ic_photo_camera_white_24dp.png'),
-                      onPressed: () {
-
-                      },
-                      constraints: BoxConstraints.tightFor(
-                        width: 56.0,
-                        height: 56.0,
-                      ),
-                      shape: CircleBorder(),
-                      fillColor: red,
+                    Stack(
+                      children: [
+                        RawMaterialButton(
+                          child: cameras == 0
+                              ? Image.asset(
+                                  'images/ic_photo_camera_white_24dp.png')
+                              : Image.asset(
+                                  'images/ic_videocam_white_24dp.png'),
+                          onPressed: () {
+                            camera = true;
+                          },
+                          constraints: BoxConstraints.tightFor(
+                            width: 56.0,
+                            height: 56.0,
+                          ),
+                          shape: CircleBorder(),
+                          fillColor: red,
+                        ),
+                        if (camera == true)
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_photo_camera_white_24dp.png'),
+                                  onPressed: () {
+                                    camera = true;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_photo_camera_white_24dp.png'),
+                                  onPressed: () {
+                                    setState(() {
+                                      cameras = 0;
+                                      camera = false;
+                                    });
+                                    cameras = 0;
+                                    camera = false;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              RawMaterialButton(
+                                child: Image.asset(
+                                    'images/ic_videocam_white_24dp.png'),
+                                onPressed: () {
+                                  setState(() {
+                                    cameras = 0;
+                                    camera = false;
+                                  });
+                                },
+                                constraints: BoxConstraints.tightFor(
+                                  width: 56.0,
+                                  height: 56.0,
+                                ),
+                                shape: CircleBorder(),
+                                fillColor: red,
+                              ),
+//                             RawMaterialButton(
+//                               child:
+//                               Image.asset('images/ic_videocam_white_24dp.png'),
+//                               onPressed: () {
+//                                 cameras=1;
+//                                 camera=false;
+//
+//                               },
+//                               constraints: BoxConstraints.tightFor(
+//                                 width: 56.0,
+//                                 height: 56.0,
+//                               ),
+//                               shape: CircleBorder(),
+//                               fillColor: red,
+//                             ),
+                            ],
+                          )
+                      ],
                     ),
                     Padding(
                       padding: EdgeInsets.all(8),
                     ),
-                    RawMaterialButton(
-                      child: Image.asset('images/ic_flash_on_white_24dp.png'),
-                      onPressed: () {},
-                      constraints: BoxConstraints.tightFor(
-                        width: 56.0,
-                        height: 56.0,
-                      ),
-                      shape: CircleBorder(),
-                      fillColor: red,
+                    Stack(
+                      children: [
+                        RawMaterialButton(
+                          child:
+                              Image.asset('images/ic_flash_on_white_24dp.png'),
+                          onPressed: () {
+                            flash = true;
+                          },
+                          constraints: BoxConstraints.tightFor(
+                            width: 56.0,
+                            height: 56.0,
+                          ),
+                          shape: CircleBorder(),
+                          fillColor: red,
+                        ),
+                        if (flash == true)
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_flash_on_white_24dp.png'),
+                                  onPressed: () {
+                                    flash = false;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_flash_on_white_24dp.png'),
+                                  onPressed: () {
+                                    flash = false;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_flash_auto_white_24dp.png'),
+                                  onPressed: () {
+                                    flash = false;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              RawMaterialButton(
+                                child: Image.asset(
+                                    'images/ic_flash_off_white_24dp.png'),
+                                onPressed: () {
+                                  flash = false;
+                                },
+                                constraints: BoxConstraints.tightFor(
+                                  width: 56.0,
+                                  height: 56.0,
+                                ),
+                                shape: CircleBorder(),
+                                fillColor: red,
+                              ),
+                            ],
+                          )
+                      ],
                     ),
                     Padding(
                       padding: EdgeInsets.all(8),
@@ -332,8 +827,7 @@ class _CaptureState extends State<Capture> {
                 child: Image.asset('images/logo_my_self_v2.png'),
               ),
             ),
-            if (check == true)
-              callCamera()
+            if (check == true) callCamera()
 //              Transform.translate(
 //                offset: Offset(x, y),
 //                child: Row(
