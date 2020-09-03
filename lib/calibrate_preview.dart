@@ -16,7 +16,9 @@ class Calibrate_Preview_State extends State<Calibrate_Preview> {
     return Scaffold(
       appBar: AppBar(
         leading: GestureDetector(
-          onTap: () {},
+          onTap: () {
+            Navigator.pop(context);
+          },
           child: Icon(Icons.arrow_back),
         ),
         automaticallyImplyLeading: false,

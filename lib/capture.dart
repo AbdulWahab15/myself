@@ -6,6 +6,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:myself/calibrate_preview.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -104,6 +105,14 @@ class _CaptureState extends State<Capture> {
                   await controller.takePicture(path);
                   GallerySaver.saveImage(path, albumName: 'Media')
                       .then((bool success) {
+                    Fluttertoast.showToast(
+                        msg: 'Image saved to $path.',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white
+                    );
                     setState(() {});
                   });
                 } catch (e) {
@@ -129,7 +138,8 @@ class _CaptureState extends State<Capture> {
                 ],
               ),
             ));
-      } else if (cameras == 0) {
+      }
+      else if (cameras == 0) {
         return Transform.translate(
             offset: Offset(x, y),
             child: InkWell(
@@ -153,6 +163,14 @@ class _CaptureState extends State<Capture> {
                   await controller.takePicture(path);
                   GallerySaver.saveImage(path, albumName: 'Media')
                       .then((bool success) {
+                    Fluttertoast.showToast(
+                        msg: 'Image saved to $path',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white
+                    );
                     setState(() {});
                   });
                 } catch (e) {
@@ -178,7 +196,8 @@ class _CaptureState extends State<Capture> {
                 ],
               ),
             ));
-      } else if (cameras == 1) {
+      }
+      else if (cameras == 1) {
         return Transform.translate(
             offset: Offset(x, y),
             child: InkWell(
@@ -201,6 +220,14 @@ class _CaptureState extends State<Capture> {
                     print(path);
                     // Attempt to take a picture and log where it's been saved.
                     await controller.startVideoRecording(path);
+                    Fluttertoast.showToast(
+                        msg: 'Video recording started.',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white
+                    );
                   } catch (e) {
                     // If an error occurs, log the error to the console.
                     print(e);
@@ -210,6 +237,14 @@ class _CaptureState extends State<Capture> {
                   print('savedPath' + path);
                   GallerySaver.saveVideo(path, albumName: 'Video')
                       .then((bool success) {
+                    Fluttertoast.showToast(
+                        msg: 'Video saved to $path.',
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.CENTER,
+                        timeInSecForIosWeb: 1,
+                        backgroundColor: Colors.grey,
+                        textColor: Colors.white
+                    );
                     setState(() {
                       print('savedPath' + path);
                     });
@@ -235,55 +270,56 @@ class _CaptureState extends State<Capture> {
             ));
       }
 
-      return Transform.translate(
-          offset: Offset(x, y),
-          child: InkWell(
-            onTap: () async {
-              print('yay for image');
-              try {
-                await _initCamFuture;
-
-                // Construct the path where the image should be saved using the path
-                // package.
-
-                final path = join(
-                  // Store the picture in the temp directory.
-                  // Find the temp directory using the `path_provider` plugin.
-                  (await getExternalStorageDirectory()).path,
-                  '${DateTime.now()}.png',
-                );
-
-                print(path);
-                // Attempt to take a picture and log where it's been saved.
-                await controller.takePicture(path);
-                GallerySaver.saveImage(path, albumName: 'Media')
-                    .then((bool success) {
-                  setState(() {});
-                });
-              } catch (e) {
-                // If an error occurs, log the error to the console.
-                print(e);
-              }
-            },
-            child: Row(
-              children: [
-                Image.asset(
-                  'images/ic_outside_indicator.png',
-                  width: 50,
-                ),
-                FittedBox(
-                  fit: BoxFit.fitWidth,
-                  child: Container(
-                    width: width * 2,
-                    height: height * 2,
-                    child:
-                        CameraPreview(controller), // this is my CameraPreview
-                  ),
-                ),
-              ],
-            ),
-          ));
-    } else if (widget.mode == 2) {
+//      return Transform.translate(
+//          offset: Offset(x, y),
+//          child: InkWell(
+//            onTap: () async {
+//              print('yay for image');
+//              try {
+//                await _initCamFuture;
+//
+//                // Construct the path where the image should be saved using the path
+//                // package.
+//
+//                final path = join(
+//                  // Store the picture in the temp directory.
+//                  // Find the temp directory using the `path_provider` plugin.
+//                  (await getExternalStorageDirectory()).path,
+//                  '${DateTime.now()}.png',
+//                );
+//
+//                print(path);
+//                // Attempt to take a picture and log where it's been saved.
+//                await controller.takePicture(path);
+//                GallerySaver.saveImage(path, albumName: 'Media')
+//                    .then((bool success) {
+//                  setState(() {});
+//                });
+//              } catch (e) {
+//                // If an error occurs, log the error to the console.
+//                print(e);
+//              }
+//            },
+//            child: Row(
+//              children: [
+//                Image.asset(
+//                  'images/ic_outside_indicator.png',
+//                  width: 50,
+//                ),
+//                FittedBox(
+//                  fit: BoxFit.fitWidth,
+//                  child: Container(
+//                    width: width * 2,
+//                    height: height * 2,
+//                    child:
+//                        CameraPreview(controller), // this is my CameraPreview
+//                  ),
+//                ),
+//              ],
+//            ),
+//          ));
+    }
+    else if (widget.mode == 2) {
       return Transform.translate(
           offset: Offset(x, y),
           child: InkWell(
@@ -306,6 +342,14 @@ class _CaptureState extends State<Capture> {
                   print(path);
                   // Attempt to take a picture and log where it's been saved.
                   await controller.startVideoRecording(path);
+                  Fluttertoast.showToast(
+                      msg: 'Video recording started.',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white
+                  );
                   setState(() {
                     count = 1;
                   });
@@ -318,6 +362,14 @@ class _CaptureState extends State<Capture> {
                 print('savedPath' + path);
                 GallerySaver.saveVideo(path, albumName: 'Video')
                     .then((bool success) {
+                  Fluttertoast.showToast(
+                      msg: 'Video saved to $path.',
+                      toastLength: Toast.LENGTH_SHORT,
+                      gravity: ToastGravity.CENTER,
+                      timeInSecForIosWeb: 1,
+                      backgroundColor: Colors.grey,
+                      textColor: Colors.white
+                  );
                   setState(() {
                     print('savedPath' + path);
                   });
@@ -341,16 +393,14 @@ class _CaptureState extends State<Capture> {
               ],
             ),
           ));
-//      if(cameras==null){
+//      if (cameras == null) {
 ////        cameras=widget.mode-1;
-//        return  Transform.translate(
+//        return Transform.translate(
 //            offset: Offset(x, y),
 //            child: InkWell(
 //              onTap: () async {
-//
 //                print('yay for video');
-//                if(count==0)
-//                {
+//                if (count == 0) {
 //                  try {
 //                    await _initCamFuture;
 ////                    final Directory extDir = await getExternalStorageDirectory();
@@ -360,7 +410,6 @@ class _CaptureState extends State<Capture> {
 ////                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
 //
 //                    path = join(
-//
 //                      (await getExternalStorageDirectory()).path,
 //                      '${DateTime.now()}.mp4',
 //                    );
@@ -368,19 +417,20 @@ class _CaptureState extends State<Capture> {
 //                    print(path);
 //                    // Attempt to take a picture and log where it's been saved.
 //                    await controller.startVideoRecording(path);
-//
+//                    setState(() {
+//                      count = 1;
+//                    });
 //                  } catch (e) {
 //                    // If an error occurs, log the error to the console.
 //                    print(e);
 //                  }
-//                }
-//                else if(count==1){
+//                } else if (count == 1) {
 //                  _stopVideoRecording();
-//                  print('savedPath'+path);
+//                  print('savedPath' + path);
 //                  GallerySaver.saveVideo(path, albumName: 'Video')
 //                      .then((bool success) {
 //                    setState(() {
-//                      print('savedPath'+path);
+//                      print('savedPath' + path);
 //                    });
 //                  });
 //                }
@@ -393,18 +443,17 @@ class _CaptureState extends State<Capture> {
 //                  ),
 //                  FittedBox(
 //                    child: Container(
-//                      width: width*2 ,
-//                      height: height*2,
-//                      child: CameraPreview(
-//                          controller), // this is my CameraPreview
+//                      width: width * 2,
+//                      height: height * 2,
+//                      child:
+//                          CameraPreview(controller), // this is my CameraPreview
 //                    ),
 //                  ),
 //                ],
 //              ),
 //            ));
-//      }
-//      else if(cameras==0){
-//        return  Transform.translate(
+//      } else if (cameras == 0) {
+//        return Transform.translate(
 //            offset: Offset(x, y),
 //            child: InkWell(
 //              onTap: () async {
@@ -443,25 +492,22 @@ class _CaptureState extends State<Capture> {
 //                  FittedBox(
 //                    fit: BoxFit.fitWidth,
 //                    child: Container(
-//                      width: width*2 ,
-//                      height: height*2,
-//                      child: CameraPreview(
-//                          controller), // this is my CameraPreview
+//                      width: width * 2,
+//                      height: height * 2,
+//                      child:
+//                          CameraPreview(controller), // this is my CameraPreview
 //                    ),
 //                  ),
 //                ],
 //              ),
 //            ));
-//      }
-//      else if(cameras==1){
-//        return  Transform.translate(
+//      } else if (cameras == 1) {
+//        return Transform.translate(
 //            offset: Offset(x, y),
 //            child: InkWell(
 //              onTap: () async {
-//
 //                print('yay for video');
-//                if(count==0)
-//                {
+//                if (count == 0) {
 //                  try {
 //                    await _initCamFuture;
 ////                    final Directory extDir = await getExternalStorageDirectory();
@@ -471,7 +517,6 @@ class _CaptureState extends State<Capture> {
 ////                    final String filePath = '$dirPath/${DateTime.now()}.mp4';
 //
 //                    path = join(
-//
 //                      (await getExternalStorageDirectory()).path,
 //                      '${DateTime.now()}.mp4',
 //                    );
@@ -479,19 +524,20 @@ class _CaptureState extends State<Capture> {
 //                    print(path);
 //                    // Attempt to take a picture and log where it's been saved.
 //                    await controller.startVideoRecording(path);
-//
+//                    setState(() {
+//                      count = 1;
+//                    });
 //                  } catch (e) {
 //                    // If an error occurs, log the error to the console.
 //                    print(e);
 //                  }
-//                }
-//                else if(count==1){
+//                } else if (count == 1) {
 //                  _stopVideoRecording();
-//                  print('savedPath'+path);
+//                  print('savedPath' + path);
 //                  GallerySaver.saveVideo(path, albumName: 'Video')
 //                      .then((bool success) {
 //                    setState(() {
-//                      print('savedPath'+path);
+//                      print('savedPath' + path);
 //                    });
 //                  });
 //                }
@@ -504,16 +550,15 @@ class _CaptureState extends State<Capture> {
 //                  ),
 //                  FittedBox(
 //                    child: Container(
-//                      width: width*2 ,
-//                      height: height*2,
-//                      child: CameraPreview(
-//                          controller), // this is my CameraPreview
+//                      width: width * 2,
+//                      height: height * 2,
+//                      child:
+//                          CameraPreview(controller), // this is my CameraPreview
 //                    ),
 //                  ),
 //                ],
 //              ),
 //            ));
-//
 //      }
     }
   }
@@ -768,15 +813,61 @@ class _CaptureState extends State<Capture> {
                     Padding(
                       padding: EdgeInsets.all(8),
                     ),
-                    RawMaterialButton(
-                      child: Image.asset('images/ic_settings_white_24dp.png'),
-                      onPressed: () {},
-                      constraints: BoxConstraints.tightFor(
-                        width: 56.0,
-                        height: 56.0,
-                      ),
-                      shape: CircleBorder(),
-                      fillColor: red,
+                    Stack(
+                      children: [
+                        RawMaterialButton(
+                          child:
+                              Image.asset('images/ic_settings_white_24dp.png'),
+                          onPressed: () {
+                            settings = true;
+                          },
+                          constraints: BoxConstraints.tightFor(
+                            width: 56.0,
+                            height: 56.0,
+                          ),
+                          shape: CircleBorder(),
+                          fillColor: red,
+                        ),
+                        if (settings == true)
+                          Row(
+                            children: [
+                              Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: RawMaterialButton(
+                                  child: Image.asset(
+                                      'images/ic_settings_white_24dp.png'),
+                                  onPressed: () {
+                                    settings = true;
+                                  },
+                                  constraints: BoxConstraints.tightFor(
+                                    width: 56.0,
+                                    height: 56.0,
+                                  ),
+                                  shape: CircleBorder(),
+                                  fillColor: red,
+                                ),
+                              ),
+                              RawMaterialButton(
+                                child: Image.asset(
+                                    'images/ic_tune_white_24dp.png'),
+                                onPressed: () {
+                                  settings = false;
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              Calibrate_Preview()));
+                                },
+                                constraints: BoxConstraints.tightFor(
+                                  width: 56.0,
+                                  height: 56.0,
+                                ),
+                                shape: CircleBorder(),
+                                fillColor: red,
+                              ),
+                            ],
+                          )
+                      ],
                     ),
                     Padding(
                       padding: EdgeInsets.all(8),
